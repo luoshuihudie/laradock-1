@@ -8,5 +8,5 @@ VOLUME /data/db /data/configdb
 
 CMD ["mongod"]
 
-EXPOSE 28017
+EXPOSE 27017
 

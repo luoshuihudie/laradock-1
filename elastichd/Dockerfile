@@ -1,0 +1,5 @@
+ARG ELASTICHD_VERSION
+
+FROM containerize/elastichd:${ELASTICHD_VERSION}
+
+EXPOSE 9800

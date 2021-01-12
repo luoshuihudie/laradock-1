@@ -966,6 +966,8 @@ services:
     elastichd:
       build:
         context: ./elastichd
+        args:
+          - ELASTICHD_VERSION=${ELASTICHD_VERSION}
       ports:
         - "${ELASTICHD_HTTP_PORT}:9800"
       depends_on:

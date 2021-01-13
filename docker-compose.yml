@@ -962,6 +962,22 @@ services:
         - frontend
         - backend
 
+### Filebeat ##############################################
+    filebeat:
+      build:
+        context: ./filebeat
+        args:
+          - ELK_VERSION=${ELK_VERSION}
+      volumes:
+        - '${APP_CODE_PATH_HOST}project/runtime/log:/var/www/log/dev'
+        - '${APP_CODE_PATH_HOST}project/runtime/log:/var/www/log/test'
+        - './filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml'
+      env_file:
+        - .env
+      networks:
+        - frontend
+        - backend
+
 ### ElasticHD ##############################################
     elastichd:
       build:

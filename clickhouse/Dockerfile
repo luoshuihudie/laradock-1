@@ -3,7 +3,7 @@ FROM ubuntu:20.04
 ARG CLICKHOUSE_VERSION=20.9.4.76
 ARG CLICKHOUSE_GOSU_VERSION=1.10
 
-RUN apt-get update \
+RUN apt-get update --fix-missing \
     && apt-get install --yes --no-install-recommends \
         apt-transport-https \
         dirmngr \
@@ -43,7 +43,7 @@ RUN chmod +x \
     /entrypoint.sh \
     /bin/gosu
 
-EXPOSE 9000 8123 9009
+EXPOSE 9008 8123 9009
 VOLUME /var/lib/clickhouse
 
 ENV CLICKHOUSE_CONFIG /etc/clickhouse-server/config.xml

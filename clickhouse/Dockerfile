@@ -11,7 +11,7 @@ RUN apt-get update --fix-missing \
     && mkdir -p /etc/apt/sources.list.d \
     && apt-key adv --keyserver keyserver.ubuntu.com --recv E0C56BD4 \
     && echo "deb http://repo.yandex.ru/clickhouse/deb/stable/ main/" > /etc/apt/sources.list.d/clickhouse.list \
-    && apt-get update \
+    && apt-get update --fix-missing \
     && env DEBIAN_FRONTEND=noninteractive \
         apt-get install --allow-unauthenticated --yes --no-install-recommends \
             clickhouse-common-static=$CLICKHOUSE_VERSION \

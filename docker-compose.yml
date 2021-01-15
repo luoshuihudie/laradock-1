@@ -1116,7 +1116,7 @@ services:
         JAVA_OPTS: "-Djava.awt.headless=true"
       ports:
         - "${JENKINS_HOST_SLAVE_AGENT_PORT}:50000"
-        - "${JENKINS_HOST_HTTP_PORT}:8080"
+        - "${JENKINS_HOST_HTTP_PORT}:8090"
       privileged: true
       volumes:
         - ${JENKINS_HOME}:/var/jenkins_home
@@ -1850,6 +1850,7 @@ services:
         - ${SONARQUBE_PORT}:9500
       depends_on:
         - postgres
+        - elasticsearch
       environment:
         - sonar.jdbc.username=${SONARQUBE_POSTGRES_USER}
         - sonar.jdbc.password=${SONARQUBE_POSTGRES_PASSWORD}

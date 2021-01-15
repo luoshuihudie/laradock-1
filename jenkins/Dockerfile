@@ -78,7 +78,7 @@ RUN chmod +x /usr/local/bin/docker-compose
 
 
 # for main web interface:
-EXPOSE 8080
+EXPOSE 8090
 
 # will be used by attached slave agents:
 EXPOSE 50000

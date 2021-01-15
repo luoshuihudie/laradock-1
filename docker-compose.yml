@@ -1847,7 +1847,7 @@ services:
         - ${DATA_PATH_HOST}/sonarqube/extensions:/opt/sonarqube/extensions
         - ${DATA_PATH_HOST}/sonarqube/plugins:/opt/sonarqube/lib/bundled-plugins
       ports:
-        - ${SONARQUBE_PORT}:9000
+        - ${SONARQUBE_PORT}:9500
       depends_on:
         - postgres
       environment:

@@ -18,8 +18,6 @@ FROM laradock/workspace:${BASE_IMAGE_TAG_PREFIX}-${LARADOCK_PHP_VERSION}
 
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
-ARG LARADOCK_PHP_VERSION
-
 # Set Environment Variables
 ENV DEBIAN_FRONTEND noninteractive
 # If you're in China, or you need to change sources, will be set CHANGE_SOURCE to true in .env.
@@ -246,6 +244,7 @@ RUN if [ ${INSTALL_WP_CLI} = true ]; then \
 ###########################################################################
 
 ARG INSTALL_BZ2=false
+ARG LARADOCK_PHP_VERSION
 RUN if [ ${INSTALL_BZ2} = true ]; then \
   apt-get -y install php${LARADOCK_PHP_VERSION}-bz2 \
 ;fi
@@ -257,10 +256,8 @@ RUN if [ ${INSTALL_BZ2} = true ]; then \
 USER root
 
 ARG INSTALL_GMP=false
+ARG LARADOCK_PHP_VERSION
 
-RUN if [ ${INSTALL_GMP} = true ]; then \
-  # Install the PHP GMP extension
-  apt-get -y install php${PHP_VERSION}-gmp \
 ARG PHP_VERSION=${LARADOCK_PHP_VERSION}
 
 RUN if [ ${INSTALL_GMP} = true ]; then \
@@ -275,6 +272,7 @@ RUN if [ ${INSTALL_GMP} = true ]; then \
 USER root
 
 ARG INSTALL_SSH2=false
+ARG LARADOCK_PHP_VERSION
 
 RUN if [ ${INSTALL_SSH2} = true ]; then \
   # Install the PHP SSH2 extension
@@ -288,6 +286,7 @@ RUN if [ ${INSTALL_SSH2} = true ]; then \
 USER root
 
 ARG INSTALL_SOAP=false
+ARG LARADOCK_PHP_VERSION
 
 RUN if [ ${INSTALL_SOAP} = true ]; then \
   # Install the PHP SOAP extension
@@ -301,6 +300,7 @@ RUN if [ ${INSTALL_SOAP} = true ]; then \
 USER root
 
 ARG INSTALL_XSL=false
+ARG LARADOCK_PHP_VERSION
 
 RUN if [ ${INSTALL_XSL} = true ]; then \
   # Install the PHP XSL extension
@@ -313,6 +313,7 @@ RUN if [ ${INSTALL_XSL} = true ]; then \
 ###########################################################################
 
 ARG INSTALL_LDAP=false
+ARG LARADOCK_PHP_VERSION
 
 RUN if [ ${INSTALL_LDAP} = true ]; then \
     apt-get update && \
@@ -335,6 +336,7 @@ RUN if [ ${INSTALL_SMB} = true ]; then \
 ###########################################################################
 
 ARG INSTALL_IMAP=false
+ARG LARADOCK_PHP_VERSION
 
 RUN if [ ${INSTALL_IMAP} = true ]; then \
     apt-get install -y php${LARADOCK_PHP_VERSION}-imap \
@@ -360,21 +362,24 @@ RUN if [ ${INSTALL_SUBVERSION} = true ]; then \
 USER root
 
 ARG INSTALL_XDEBUG=true
+ARG LARADOCK_PHP_VERSION
 
 RUN if [ ${INSTALL_XDEBUG} = true ]; then \
     # Load the xdebug extension only with phpunit commands
+    echo "输出PHP版本+++++++++++++++" && \
+    echo ${LARADOCK_PHP_VERSION} && \
     apt-get update && \
     apt-get install -y php${LARADOCK_PHP_VERSION}-xdebug && \
-    sed -i 's/^;//g' /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-xdebug.ini && \
+#    sed -i 's/^;//g' /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-xdebug.ini && \
     echo "alias phpunit='php -dzend_extension=xdebug.so /var/www/vendor/bin/phpunit'" >> ~/.bashrc \
 ;fi
 
 # ADD for REMOTE debugging
-#COPY ./xdebug.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini
+COPY ./xdebug.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-xdebug.ini
 
-#RUN sed -i "s/xdebug.remote_autostart=0/xdebug.remote_autostart=1/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini && \
-#    sed -i "s/xdebug.remote_enable=0/xdebug.remote_enable=1/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini && \
-#    sed -i "s/xdebug.cli_color=0/xdebug.cli_color=1/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini
+RUN sed -i "s/xdebug.remote_autostart=0/xdebug.remote_autostart=1/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-xdebug.ini && \
+    sed -i "s/xdebug.remote_enable=0/xdebug.remote_enable=1/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-xdebug.ini && \
+    sed -i "s/xdebug.cli_color=0/xdebug.cli_color=1/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-xdebug.ini
 
 ###########################################################################
 # Phpdbg:
@@ -407,9 +412,9 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; then \
 ## ADD for REMOTE debugging
 #COPY ./xdebug.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini
 
-RUN sed -i "s/xdebug.remote_autostart=0/xdebug.remote_autostart=1/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini && \
-    sed -i "s/xdebug.remote_enable=0/xdebug.remote_enable=1/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini && \
-    sed -i "s/xdebug.cli_color=0/xdebug.cli_color=1/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini
+#RUN sed -i "s/xdebug.remote_autostart=0/xdebug.remote_autostart=1/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini && \
+#    sed -i "s/xdebug.remote_enable=0/xdebug.remote_enable=1/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini && \
+#    sed -i "s/xdebug.cli_color=0/xdebug.cli_color=1/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini
 
 ###########################################################################
 # pcov:
@@ -418,6 +423,7 @@ RUN sed -i "s/xdebug.remote_autostart=0/xdebug.remote_autostart=1/" /etc/php/${L
 USER root
 
 ARG INSTALL_PCOV=false
+ARG LARADOCK_PHP_VERSION
 
 RUN if [ ${INSTALL_PCOV} = true ]; then \
   if [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
@@ -437,6 +443,7 @@ RUN if [ ${INSTALL_PCOV} = true ]; then \
 USER root
 
 ARG INSTALL_PHPDBG=false
+ARG LARADOCK_PHP_VERSION
 
 RUN if [ ${INSTALL_PHPDBG} = true ]; then \
     # Load the xdebug extension only with phpunit commands
@@ -486,6 +493,7 @@ RUN if [ ${INSTALL_WORKSPACE_SSH} = true ]; then \
 ###########################################################################
 
 ARG INSTALL_MONGO=false
+ARG LARADOCK_PHP_VERSION
 
 RUN if [ ${INSTALL_MONGO} = true ]; then \
     # Install the mongodb extension
@@ -505,6 +513,7 @@ RUN if [ ${INSTALL_MONGO} = true ]; then \
 ###########################################################################
 
 ARG INSTALL_AMQP=false
+ARG LARADOCK_PHP_VERSION
 
 RUN if [ ${INSTALL_AMQP} = true ]; then \
     apt-get install librabbitmq-dev -y && \
@@ -518,6 +527,7 @@ RUN if [ ${INSTALL_AMQP} = true ]; then \
 ###########################################################################
 
 ARG INSTALL_CASSANDRA=false
+ARG LARADOCK_PHP_VERSION
 
 RUN if [ ${INSTALL_CASSANDRA} = true ]; then \
     apt-get install libgmp-dev -y && \
@@ -561,6 +571,7 @@ RUN if [ ${INSTALL_GEARMAN} = true ]; then \
 ###########################################################################
 
 ARG INSTALL_PHPREDIS=false
+ARG LARADOCK_PHP_VERSION
 
 RUN if [ ${INSTALL_PHPREDIS} = true ]; then \
     # Install Php Redis extension
@@ -613,9 +624,9 @@ RUN if [ ${INSTALL_SWOOLE} = true ]; then \
 #      fi \
 #    fi && \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-        curl -L -o /tmp/swoole-4.3.5.tgz "https://pecl.php.net/get/swoole-4.3.5.tgz"; \
+        curl -L -o /tmp/swoole-4.3.5.tgz "https://pecl.php.net/get/swoole-4.6.0.tgz"; \
     else \
-        curl -L -o /tmp/swoole-4.3.5.tgz "https://pecl.php.net/get/swoole-4.3.5.tgz"; \
+        curl -L -o /tmp/swoole-4.3.5.tgz "https://pecl.php.net/get/swoole-4.6.0.tgz"; \
     fi \
     && pecl -vvv -q install /tmp/swoole-4.3.5.tgz \
     && rm /tmp/swoole-4.3.5.tgz \
@@ -630,6 +641,7 @@ RUN if [ ${INSTALL_SWOOLE} = true ]; then \
 USER root
 
 ARG INSTALL_GRPC=true
+ARG LARADOCK_PHP_VERSION
 
 RUN if [ ${INSTALL_GRPC} = true ]; then \
     # Install Php Redis extension
@@ -653,6 +665,7 @@ RUN if [ ${INSTALL_GRPC} = true ]; then \
 ###########################################################################
 
 ARG INSTALL_YAF=true
+ARG LARADOCK_PHP_VERSION
 
 RUN if [ ${INSTALL_YAF} = true ]; then \
     # Install Php YAF Extension
@@ -666,9 +679,9 @@ RUN if [ ${INSTALL_YAF} = true ]; then \
 #      fi \
 #    fi && \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-        curl -L -o /tmp/yaf-3.0.7.tgz "https://pecl.php.net/get/yaf-3.0.7.tgz"; \
+        curl -L -o /tmp/yaf-3.0.7.tgz "https://pecl.php.net/get/yaf-3.3.0.tgz"; \
     else \
-        curl -L -o /tmp/yaf-3.0.7.tgz "https://pecl.php.net/get/yaf-3.0.7.tgz"; \
+        curl -L -o /tmp/yaf-3.0.7.tgz "https://pecl.php.net/get/yaf-3.3.0.tgz"; \
     fi \
     && pecl -vvv -q install /tmp/yaf-3.0.7.tgz \
     && rm /tmp/yaf-3.0.7.tgz \
@@ -683,6 +696,7 @@ RUN if [ ${INSTALL_YAF} = true ]; then \
 USER root
 
 ARG INSTALL_MCRYPT=true
+ARG LARADOCK_PHP_VERSION
 
 RUN if [ ${INSTALL_MCRYPT} = true ]; then \
     # Install Php MCRYPT Extension
@@ -734,6 +748,7 @@ RUN if [ ${INSTALL_LIBPNG} = true ]; then \
 ###########################################################################
 
 ARG INSTALL_TAINT=false
+ARG LARADOCK_PHP_VERSION
 
 RUN if [ "${INSTALL_TAINT}" = true ]; then \
     # Install Php TAINT Extension
@@ -761,6 +776,7 @@ RUN if [ ${INSTALL_LIBPNG} = true ]; then \
 ###########################################################################
 
 ARG INSTALL_INOTIFY=false
+ARG LARADOCK_PHP_VERSION
 
 RUN if [ ${INSTALL_INOTIFY} = true ]; then \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") != "5" ]; then \
@@ -781,6 +797,7 @@ RUN if [ ${INSTALL_INOTIFY} = true ]; then \
 ARG INSTALL_AST=false
 ARG AST_VERSION=1.0.3
 ENV AST_VERSION ${AST_VERSION}
+ARG LARADOCK_PHP_VERSION
 
 RUN if [ ${INSTALL_AST} = true ]; then \
     # AST extension requires PHP 7.0.0 or newer
@@ -821,6 +838,7 @@ RUN if [ ${INSTALL_GRAPHVIZ} = true ]; then \
 ###########################################################################
 
 ARG INSTALL_IONCUBE=false
+ARG LARADOCK_PHP_VERSION
 
 RUN if [ ${INSTALL_IONCUBE} = true ]; then \
     # Install the php ioncube loader
@@ -1000,6 +1018,7 @@ ENV PATH $PATH:/home/laradock/.yarn/bin
 USER root
 
 ARG INSTALL_AEROSPIKE=false
+ARG LARADOCK_PHP_VERSION
 
 RUN set -xe; \
   if [ ${INSTALL_AEROSPIKE} = true ]; then \
@@ -1042,6 +1061,7 @@ RUN set -xe; \
 USER root
 ARG INSTALL_OCI8=false
 ARG ORACLE_INSTANT_CLIENT_MIRROR=https://github.com/diogomascarenha/oracle-instantclient/raw/master/
+ARG LARADOCK_PHP_VERSION
 
 ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_12_1"
 ENV OCI_HOME="/opt/oracle/instantclient_12_1"
@@ -1084,6 +1104,7 @@ RUN if [ ${INSTALL_OCI8} = true ]; then \
 USER root
 
 ARG INSTALL_V8JS=false
+ARG LARADOCK_PHP_VERSION
 
 RUN set -xe; \
   if [ ${INSTALL_V8JS} = true ]; then \
@@ -1196,6 +1217,7 @@ RUN if [ ${INSTALL_LINUXBREW} = true ]; then \
 ###########################################################################
 
 ARG INSTALL_MSSQL=false
+ARG LARADOCK_PHP_VERSION
 
 RUN set -eux; \
   if [ ${INSTALL_MSSQL} = true ]; then \
@@ -1413,6 +1435,7 @@ RUN if [ ${INSTALL_DUSK_DEPS} = true ]; then \
 
 ARG INSTALL_PHALCON=false
 ARG LARADOCK_PHALCON_VERSION
+ARG LARADOCK_PHP_VERSION
 ENV LARADOCK_PHALCON_VERSION ${LARADOCK_PHALCON_VERSION}
 
 RUN if [ $INSTALL_PHALCON = true ]; then \
@@ -1480,6 +1503,7 @@ RUN if [ ${INSTALL_SSHPASS} = true ]; then \
 USER root
 
 ARG INSTALL_YAML=false
+ARG LARADOCK_PHP_VERSION
 
 RUN if [ ${INSTALL_YAML} = true ]; then \
     apt-get install libyaml-dev -y ; \
@@ -1497,6 +1521,7 @@ RUN if [ ${INSTALL_YAML} = true ]; then \
 ###########################################################################
 
 ARG INSTALL_RDKAFKA=false
+ARG LARADOCK_PHP_VERSION
 
 RUN if [ ${INSTALL_RDKAFKA} = true ]; then \
     apt-get install -y librdkafka-dev && \
@@ -1629,6 +1654,7 @@ RUN if [ ${INSTALL_LNAV} = true ]; then \
 
 ARG INSTALL_PROTOC=false
 ARG PROTOC_VERSION
+ARG LARADOCK_PHP_VERSION
 
 RUN if [ ${INSTALL_PROTOC} = true ]; then \
   if [ ${PROTOC_VERSION} = "latest" ]; then \

@@ -193,9 +193,9 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; then \
 #    pecl install xdebug; \
 #  fi && \
   if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-    curl -L -o /tmp/xdebug-2.6.1.tgz "https://pecl.php.net/get/xdebug-2.6.1.tgz"; \
+    curl -L -o /tmp/xdebug-2.6.1.tgz "http://pecl.php.net/get/xdebug-3.0.2.tgz"; \
   else \
-    curl -L -o /tmp/xdebug-2.6.1.tgz "https://pecl.php.net/get/xdebug-2.6.1.tgz"; \
+    curl -L -o /tmp/xdebug-2.6.1.tgz "http://pecl.php.net/get/xdebug-3.0.2.tgz"; \
   fi \
   && pecl -vvv -q install /tmp/xdebug-2.6.1.tgz \
   && rm /tmp/xdebug-2.6.1.tgz \
@@ -348,9 +348,9 @@ RUN if [ ${INSTALL_SWOOLE} = true ]; then \
 #      fi \
 #    fi && \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-        curl -L -o /tmp/swoole-4.3.5.tgz "http://pecl.php.net/get/swoole-4.5.6.tgz"; \
+        curl -L -o /tmp/swoole-4.3.5.tgz "https://pecl.php.net/get/swoole-4.6.0.tgz"; \
     else \
-        curl -L -o /tmp/swoole-4.3.5.tgz "http://pecl.php.net/get/swoole-4.5.6.tgz"; \
+        curl -L -o /tmp/swoole-4.3.5.tgz "https://pecl.php.net/get/swoole-4.6.0.tgz"; \
     fi \
     && pecl -vvv -q install /tmp/swoole-4.3.5.tgz \
     && rm /tmp/swoole-4.3.5.tgz \
@@ -379,9 +379,9 @@ RUN if [ ${INSTALL_YAF} = true ]; then \
 #      fi \
 #    fi && \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-        curl -L -o /tmp/yaf-3.0.7.tgz "http://pecl.php.net/get/yaf-3.2.5.tgz"; \
+        curl -L -o /tmp/yaf-3.0.7.tgz "https://pecl.php.net/get/yaf-3.3.0.tgz"; \
     else \
-        curl -L -o /tmp/yaf-3.0.7.tgz "http://pecl.php.net/get/yaf-3.2.5.tgz"; \
+        curl -L -o /tmp/yaf-3.0.7.tgz "https://pecl.php.net/get/yaf-3.3.0.tgz"; \
     fi \
     && pecl -vvv -q install /tmp/yaf-3.0.7.tgz \
     && rm /tmp/yaf-3.0.7.tgz \

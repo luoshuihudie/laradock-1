@@ -1324,8 +1324,8 @@ ARG INSTALL_PYTHON3=false
 
 RUN if [ ${INSTALL_PYTHON3} = true ]; then \
   apt-get -y install python3 python3-pip python3-dev build-essential  \
-  && python3 -m pip install --upgrade --force-reinstall pip  \
-  && python3 -m pip install --upgrade virtualenv \
+  && python3 -m pip install  --upgrade --force-reinstall -i https://pypi.doubanio.com/simple/ pip  \
+  && python3 -m pip install --upgrade -i https://pypi.doubanio.com/simple/ virtualenv \
 ;fi
 
 ###########################################################################

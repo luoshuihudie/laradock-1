@@ -395,20 +395,6 @@ RUN if [ ${INSTALL_YAF} = true ]; then \
 #	sed -i "s/yaf.use_spl_autoload=0/yaf.use_spl_autoload=1/" /usr/local/etc/php/conf.d/yaf.ini \
 
 ###########################################################################
-# MongoDB:
-###########################################################################
-
-ARG INSTALL_MONGO=false
-
-RUN if [ ${INSTALL_MONGO} = true ]; then \
-    # Install the mongodb extension
-    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-      pecl install mongo && \
-      docker-php-ext-enable mongo \
-    ;fi && \
-    pecl install mongodb && \
-    docker-php-ext-enable mongodb \
-###########################################################################
 # Swoole EXTENSION
 ###########################################################################
 

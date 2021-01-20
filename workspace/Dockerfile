@@ -649,9 +649,9 @@ RUN if [ ${INSTALL_GRPC} = true ]; then \
 #    echo "extension=gRPC.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/gRPC.ini && \
 #    phpenmod gRPC \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-        curl -L -o /tmp/grpc-1.21.3.tgz "http://pecl.php.net/get/grpc-1.21.3.tgz"; \
+        curl -L -o /tmp/grpc-1.21.3.tgz "https://pecl.php.net/get/grpc-1.33.1.tgz"; \
     else \
-        curl -L -o /tmp/grpc-1.21.3.tgz "http://pecl.php.net/get/grpc-1.21.3.tgz"; \
+        curl -L -o /tmp/grpc-1.21.3.tgz "https://pecl.php.net/get/grpc-1.33.1.tgz"; \
     fi \
     && apt install zlib1g-dev -y \
     && pecl -vvv -q install /tmp/grpc-1.21.3.tgz \

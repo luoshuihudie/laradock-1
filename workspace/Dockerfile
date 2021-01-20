@@ -701,9 +701,9 @@ ARG LARADOCK_PHP_VERSION
 RUN if [ ${INSTALL_MCRYPT} = true ]; then \
     # Install Php MCRYPT Extension
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-        curl -L -o /tmp/mcrypt-1.0.2.tgz "https://pecl.php.net/get/mcrypt-1.0.2.tgz"; \
+        curl -L -o /tmp/mcrypt-1.0.2.tgz "https://pecl.php.net/get/mcrypt-1.0.4.tgz"; \
     else \
-        curl -L -o /tmp/mcrypt-1.0.2.tgz "https://pecl.php.net/get/mcrypt-1.0.2.tgz"; \
+        curl -L -o /tmp/mcrypt-1.0.2.tgz "https://pecl.php.net/get/mcrypt-1.0.4.tgz"; \
     fi \
     && apt-get -y install gcc make autoconf libc-dev pkg-config \
     && apt-get -y install libmcrypt-dev \

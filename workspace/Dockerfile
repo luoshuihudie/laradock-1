@@ -599,9 +599,9 @@ RUN if [ ${INSTALL_PHPREDIS} = true ]; then \
 #    ) \
 #    && rm -r phpredis \
 #    && rm /tmp/phpredis.tar.gz \
-    && docker-php-ext-install redis \
-#    apt-get update -yqq && \
-#    apt-get install -yqq php-redis \
+#    && docker-php-ext-install redis \
+    apt-get update -yqq && \
+    apt-get install -yqq php-redis \
 ;fi
 
 ###########################################################################

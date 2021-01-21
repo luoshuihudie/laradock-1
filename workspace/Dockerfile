@@ -631,6 +631,7 @@ RUN if [ ${INSTALL_SWOOLE} = true ]; then \
     && pecl -vvv -q install /tmp/swoole-4.3.5.tgz \
     && rm /tmp/swoole-4.3.5.tgz \
     && echo "extension=swoole.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/swoole.ini \
+    && echo "swoole.use_shortname = off" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/swoole.ini \
     && ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/swoole.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-swoole.ini \
 ;fi
 

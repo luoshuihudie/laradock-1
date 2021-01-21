@@ -599,9 +599,9 @@ RUN if [ ${INSTALL_PHPREDIS} = true ]; then \
 #    ) \
 #    && rm -r phpredis \
 #    && rm /tmp/phpredis.tar.gz \
-#    && docker-php-ext-install redis \
-    apt-get update -yqq && \
-    apt-get install -yqq php-redis \
+    && docker-php-ext-install redis \
+#    apt-get update -yqq && \
+#    apt-get install -yqq php-redis \
 ;fi
 
 ###########################################################################
@@ -1442,7 +1442,7 @@ RUN if [ $INSTALL_PHALCON = true ]; then \
     apt-get update && apt-get install -y unzip libpcre3-dev gcc make re2c git automake autoconf\
     && git clone https://github.com/jbboehr/php-psr.git \
     && cd php-psr \
-    && phpize \
+    && phpize --enable-phalcon \
     && ./configure \
     && make \
     && make test \

@@ -947,12 +947,19 @@ ARG INSTALL_YAML=false
 
 RUN if [ ${INSTALL_YAML} = true ]; then \
     apt-get install libyaml-dev -y ; \
+#    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
+#        pecl install -a yaml-2.2.1; \
+#    else \
+#        pecl install yaml; \
+#    fi && \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-        pecl install -a yaml-2.2.1; \
+        curl -L -o /tmp/yaml-2.2.1.tgz "http://pecl.php.net/get/yaml-2.2.1.tgz"; \
     else \
-        pecl install yaml; \
-    fi && \
-    docker-php-ext-enable yaml \
+        curl -L -o /tmp/yaml-2.2.1.tgz "http://pecl.php.net/get/yaml-2.2.1.tgz"; \
+    fi \
+    && pecl -vvv -q install /tmp/yaml-2.2.1.tgz \
+    && rm /tmp/yaml-2.2.1.tgz \
+    && docker-php-ext-enable yaml \
 ;fi
 
 ###########################################################################

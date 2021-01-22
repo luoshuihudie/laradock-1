@@ -948,7 +948,7 @@ ARG INSTALL_YAML=false
 RUN if [ ${INSTALL_YAML} = true ]; then \
     apt-get install libyaml-dev -y ; \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-        pecl install -a yaml-1.3.2; \
+        pecl install -a yaml-2.2.1; \
     else \
         pecl install yaml; \
     fi && \

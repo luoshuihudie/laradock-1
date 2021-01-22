@@ -323,6 +323,7 @@ RUN if [ ${INSTALL_MCRYPT} = true ]; then \
     else \
         curl -L -o /tmp/mcrypt-1.0.2.tgz "http://pecl.php.net/get/mcrypt-1.0.4.tgz"; \
     fi \
+    && apt-get -y autoremove \
     && apt-get -y install gcc make autoconf libc-dev pkg-config \
     && apt-get -y install libmcrypt-dev \
     && pecl -vvv -q install /tmp/mcrypt-1.0.2.tgz \

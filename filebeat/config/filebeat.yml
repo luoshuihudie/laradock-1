@@ -1,8 +1,22 @@
-filebeat.inputs:
+filebeat.prospectors:
+  - type: log
+    # Change to true to enable this prospector configuration.
+    enabled: true
+    # Paths that should be crawled and fetched. Glob based paths.
+    paths:
+      - /var/www/log/dev/*/*.log
+    tags: ["dev"]
   - type: log
     enabled: true
     paths:
-      - /var/www/log/order-monitor.log
+      - /var/www/log/test/*/*.log
+    tags: ["test"]
+
+#filebeat.inputs:
+#  - type: log
+#    enabled: true
+#    paths:
+#      - /var/www/log/order-monitor.log
 
 output.logstash:
   # Boolean flag to enable or disable the output module.

@@ -23,4 +23,4 @@ output.logstash:
   enabled: true
 
   # The Logstash hosts
-  hosts: ["logstash:5001"]
+  hosts: ["logstash:5044"]

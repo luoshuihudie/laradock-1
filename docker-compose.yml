@@ -974,7 +974,7 @@ services:
           - ELK_VERSION=${ELK_VERSION}
       volumes:
         - '${APP_CODE_PATH_HOST}/log/dev:/var/www/log/dev'
-        - '${APP_CODE_PATH_HOST}/log/dev:/var/www/log/test'
+        - '${APP_CODE_PATH_HOST}/log/test:/var/www/log/test'
         - './filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml'
       env_file:
         - .env

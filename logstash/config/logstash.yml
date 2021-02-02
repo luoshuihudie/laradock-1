@@ -3,3 +3,5 @@ http.host: "0.0.0.0"
 xpack.monitoring.enabled: false
 config.reload.automatic: true
 path.config: "/usr/share/logstash/pipeline"
+
+#nohup bin/logstash -f ./pipeline/first-pipeline.conf --config.reload.automatic  > ./data/nohup.out &

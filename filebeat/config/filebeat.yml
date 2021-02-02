@@ -18,3 +18,5 @@ output.logstash:
 
   # The Logstash hosts
   hosts: ["logstash:5001"]
+
+#nohup ./filebeat -e -c filebeat.yml -d "publish" > ./data/nohup.out &

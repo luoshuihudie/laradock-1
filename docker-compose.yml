@@ -1154,22 +1154,22 @@ services:
       networks:
         - backend
 ### InfluxDB ################################################
-  influxdb:
-    build:
-      context: ./influxdb
-    environment:
-      - INFLUXDB_REPORTING_DISABLED=${INFLUXDB_REPORTING_DISABLED}
-      - INFLUXDB_META_LOGGING_ENABLED=${INFLUXDB_META_LOGGING_ENABLED}
-      - INFLUXDB_DATA_QUERY_LOG_ENABLED=${INFLUXDB_DATA_QUERY_LOG_ENABLED}
-      - INFLUXDB_ADMIN_ENABLED=${INFLUXDB_ADMIN_ENABLED}
-    volumes:
-      - ${DATA_PATH_HOST}/influx:/var/opt/influx
-    ports:
-      - "${INFLUXDB_PORT}:8083"
-      - "${INFLUXDB_ADMIN_PORT}:8086"
-    networks:
-      - frontend
-      - backend
+    influxdb:
+      build:
+        context: ./influxdb
+      environment:
+        - INFLUXDB_REPORTING_DISABLED=${INFLUXDB_REPORTING_DISABLED}
+        - INFLUXDB_META_LOGGING_ENABLED=${INFLUXDB_META_LOGGING_ENABLED}
+        - INFLUXDB_DATA_QUERY_LOG_ENABLED=${INFLUXDB_DATA_QUERY_LOG_ENABLED}
+        - INFLUXDB_ADMIN_ENABLED=${INFLUXDB_ADMIN_ENABLED}
+      volumes:
+        - ${DATA_PATH_HOST}/influx:/var/opt/influx
+      ports:
+        - "${INFLUXDB_PORT}:8083"
+        - "${INFLUXDB_ADMIN_PORT}:8086"
+      networks:
+        - frontend
+        - backend
 
 ### Graylog #######################################
     graylog:

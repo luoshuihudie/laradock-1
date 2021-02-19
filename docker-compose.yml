@@ -55,6 +55,8 @@ volumes:
     driver: ${VOLUMES_DRIVER}
   react:
     driver: ${VOLUMES_DRIVER}
+  influx:
+    driver: ${VOLUMES_DRIVER}
 
 services:
 

@@ -1,6 +1,6 @@
 ARG BASE_IMAGE_TAG_PREFIX=latest
 FROM influxdb:${BASE_IMAGE_TAG_PREFIX}
-ARG CHANGE_SOURCE=false
+ARG CHANGE_SOURCE=true
 RUN if [ ${CHANGE_SOURCE} = true ]; then \
     # Change application source from deb.debian.org to aliyun source
     sed -i 's/deb.debian.org/mirrors.aliyun.com/' /etc/apt/sources.list && \

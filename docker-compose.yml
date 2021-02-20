@@ -1160,7 +1160,7 @@ services:
         - elasticsearch
         - influxdb
       ports:
-        - "${GRAFANA_PORT}:3000"
+        - "${GRAFANA_PORT}:4000"
       networks:
         - backend
 ### InfluxDB ################################################

@@ -1151,6 +1151,14 @@ services:
         context: ./grafana
       volumes:
         - ${DATA_PATH_HOST}/grafana:/var/lib/grafana
+      links:
+        - mongo
+        - influxdb
+        - elasticsearch
+        depends_on:
+          - mongo
+          - elasticsearch
+          - influxdb
       ports:
         - "${GRAFANA_PORT}:3000"
       networks:

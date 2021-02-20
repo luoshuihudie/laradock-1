@@ -1155,10 +1155,10 @@ services:
         - mongo
         - influxdb
         - elasticsearch
-        depends_on:
-          - mongo
-          - elasticsearch
-          - influxdb
+      depends_on:
+        - mongo
+        - elasticsearch
+        - influxdb
       ports:
         - "${GRAFANA_PORT}:3000"
       networks:

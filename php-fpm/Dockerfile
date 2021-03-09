@@ -349,9 +349,9 @@ RUN if [ ${INSTALL_SWOOLE} = true ]; then \
 #      fi \
 #    fi && \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-        curl -L -o /tmp/swoole-4.3.5.tgz "https://pecl.php.net/get/swoole-4.6.0.tgz"; \
+        curl -L -o /tmp/swoole-4.3.5.tgz "https://pecl.php.net/get/swoole-4.6.3.tgz"; \
     else \
-        curl -L -o /tmp/swoole-4.3.5.tgz "https://pecl.php.net/get/swoole-4.6.0.tgz"; \
+        curl -L -o /tmp/swoole-4.3.5.tgz "https://pecl.php.net/get/swoole-4.6.3.tgz"; \
     fi \
     && pecl -vvv -q install /tmp/swoole-4.3.5.tgz \
     && rm /tmp/swoole-4.3.5.tgz \

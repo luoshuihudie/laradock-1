@@ -180,7 +180,7 @@
         <test_shard_localhost>
             <shard>
                 <replica>
-                    <host>localhost</host>
+                    <host>   </host>
                     <port>9000</port>
                 </replica>
             </shard>

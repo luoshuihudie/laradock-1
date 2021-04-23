@@ -451,6 +451,7 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; then \
 
 # ADD for REMOTE debugging
 COPY ./xdebug.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-xdebug.ini
+COPY ./xdebug.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/xdebug.ini
 
 RUN sed -i "s/xdebug.remote_autostart=0/xdebug.remote_autostart=1/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-xdebug.ini && \
     sed -i "s/xdebug.remote_enable=0/xdebug.remote_enable=1/" /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-xdebug.ini && \
@@ -722,11 +723,11 @@ RUN if [ ${INSTALL_SWOOLE} = true ]; then \
 #      fi \
 #    fi && \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-        curl -L -o /tmp/swoole-4.3.5.tgz "https://pecl.php.net/get/swoole-4.6.0.tgz"; \
+        curl -L -o /tmp/swoole-4.3.5.tgz "https://pecl.php.net/get/swoole-4.6.6.tgz"; \
     else \
-        curl -L -o /tmp/swoole-4.3.5.tgz "https://pecl.php.net/get/swoole-4.6.0.tgz"; \
+        curl -L -o /tmp/swoole-4.3.5.tgz "https://pecl.php.net/get/swoole-4.6.6.tgz"; \
     fi \
-    && pecl -vvv -q install /tmp/swoole-4.3.5.tgz \
+    && printf "yes\nyes\nyes\nyes\n" | pecl -vvv -q install /tmp/swoole-4.3.5.tgz \
     && rm /tmp/swoole-4.3.5.tgz \
     && echo "extension=swoole.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/swoole.ini \
     && echo "swoole.use_shortname = off" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/swoole.ini \

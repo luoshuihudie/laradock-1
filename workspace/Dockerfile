@@ -239,16 +239,6 @@ RUN if [ ${INSTALL_WP_CLI} = true ]; then \
 ;fi
 
 ###########################################################################
-# BZ2:
-###########################################################################
-
-ARG INSTALL_BZ2=false
-ARG LARADOCK_PHP_VERSION
-RUN if [ ${INSTALL_BZ2} = true ]; then \
-  apt-get -y install php${LARADOCK_PHP_VERSION}-bz2 \
-;fi
-
-###########################################################################
 # GMP (GNU Multiple Precision):
 ###########################################################################
 
@@ -300,6 +290,7 @@ RUN if [ ${INSTALL_SOAP} = true ]; then \
 USER root
 
 ARG INSTALL_XSL=false
+ARG INSTALL_BZ2=false
 ARG LARADOCK_PHP_VERSION
 ARG INSTALL_GNUPG=false
 ARG INSTALL_SSH2=false

@@ -84,6 +84,17 @@ RUN if [ ${INSTALL_BZ2} = true ]; then \
 ;fi
 
 ###########################################################################
+# Enchant:
+###########################################################################
+
+ARG INSTALL_ENCHANT=false
+RUN if [ ${INSTALL_ENCHANT} = true ]; then \
+  apt-get install -yqq libenchant-dev; \
+  docker-php-ext-install enchant; \
+  php -m | grep -oiE '^enchant$'; \
+fi
+
+###########################################################################
 # GMP (GNU Multiple Precision):
 ###########################################################################
 
@@ -587,14 +598,14 @@ RUN if [ ${INSTALL_XHPROF} = false ]; then \
 
 ARG INSTALL_AMQP=true
 
-RUN if [ ${INSTALL_AMQP} = true ]; then \
-    apt-get install librabbitmq-dev -y && \
-    # Install the amqp extension
-    pecl install amqp-1.11.0beta && \
-    docker-php-ext-enable amqp && \
-    docker-php-ext-install sockets && \
-    php -m | grep -q 'sockets' \
-;fi
+#RUN if [ ${INSTALL_AMQP} = true ]; then \
+#    apt-get install librabbitmq-dev -y && \
+#    # Install the amqp extension
+#    pecl install amqp-1.11.0beta && \
+#    docker-php-ext-enable amqp && \
+#    docker-php-ext-install sockets && \
+#    php -m | grep -q 'sockets' \
+#;fi
 #
 ############################################################################
 ## ZipArchive:
@@ -637,6 +648,20 @@ RUN if [ ${INSTALL_AMQP} = true ]; then \
 #    docker-php-ext-install sockets && \
 #    php -m | grep -q 'sockets' \
 #;fi
+RUN set -eux; \
+    if [ ${INSTALL_AMQP} = true ]; then \
+      # # Install the amqp extension
+      apt-get -yqq install librabbitmq-dev; \
+      if [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
+        pecl install amqp-1.11.0beta; \
+      else \
+        pecl install amqp; \
+      fi; \
+      docker-php-ext-enable amqp; && \
+      docker-php-ext-install sockets && \
+      php -m | grep -q 'sockets' && \
+      php -m | grep -oiE '^amqp$'; \
+    fi
 
 ###########################################################################
 # CASSANDRA:

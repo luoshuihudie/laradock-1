@@ -126,6 +126,7 @@ services:
           - INSTALL_SYMFONY=${WORKSPACE_INSTALL_SYMFONY}
           - INSTALL_PYTHON=${WORKSPACE_INSTALL_PYTHON}
           - INSTALL_PYTHON3=${WORKSPACE_INSTALL_PYTHON3}
+          - INSTALL_GO=${WORKSPACE_INSTALL_GO}
           - INSTALL_IMAGE_OPTIMIZERS=${WORKSPACE_INSTALL_IMAGE_OPTIMIZERS}
           - INSTALL_IMAGEMAGICK=${WORKSPACE_INSTALL_IMAGEMAGICK}
           - INSTALL_TERRAFORM=${WORKSPACE_INSTALL_TERRAFORM}
@@ -1431,21 +1432,21 @@ services:
         context: ./gitlab
       environment:
         GITLAB_OMNIBUS_CONFIG: |
-          external_url '${GITLAB_DOMAIN_NAME}'
-          redis['enable'] = false
-          nginx['listen_https'] = false
-          nginx['listen_port'] = 80
-          nginx['custom_gitlab_server_config'] = "set_real_ip_from 172.0.0.0/8;\nreal_ip_header X-Real-IP;\nreal_ip_recursive on;"
-          postgresql['enable'] = false
-          gitlab_rails['trusted_proxies'] = ['caddy','nginx','apache2']
-          gitlab_rails['redis_host'] = 'redis'
-          gitlab_rails['redis_database'] = 8
-          gitlab_rails['db_host'] = '${GITLAB_POSTGRES_HOST}'
-          gitlab_rails['db_username'] = '${GITLAB_POSTGRES_USER}'
-          gitlab_rails['db_password'] = '${GITLAB_POSTGRES_PASSWORD}'
-          gitlab_rails['db_database'] = '${GITLAB_POSTGRES_DB}'
-          gitlab_rails['initial_root_password'] = '${GITLAB_ROOT_PASSWORD}'
-          gitlab_rails['gitlab_shell_ssh_port'] = ${GITLAB_HOST_SSH_PORT}
+          external_url:'${GITLAB_DOMAIN_NAME}'
+          redis['enable']:false
+          nginx['listen_https']:false
+          nginx['listen_port']:80
+          nginx['custom_gitlab_server_config']:"set_real_ip_from 172.0.0.0/8;\nreal_ip_header X-Real-IP;\nreal_ip_recursive on;"
+          postgresql['enable']:false
+          gitlab_rails['trusted_proxies']:['caddy','nginx','apache2']
+          gitlab_rails['redis_host']:'redis'
+          gitlab_rails['redis_database']:8
+          gitlab_rails['db_host']:'${GITLAB_POSTGRES_HOST}'
+          gitlab_rails['db_username']:'${GITLAB_POSTGRES_USER}'
+          gitlab_rails['db_password']:'${GITLAB_POSTGRES_PASSWORD}'
+          gitlab_rails['db_database']:'${GITLAB_POSTGRES_DB}'
+          gitlab_rails['initial_root_password']:'${GITLAB_ROOT_PASSWORD}'
+          gitlab_rails['gitlab_shell_ssh_port']:${GITLAB_HOST_SSH_PORT}
       volumes:
         - ${DATA_PATH_HOST}/gitlab/config:/etc/gitlab
         - ${DATA_PATH_HOST}/gitlab/data:/var/opt/gitlab
@@ -1463,8 +1464,8 @@ services:
       image: gitlab/gitlab-runner:latest
       environment:
         - CI_SERVER_URL=${GITLAB_CI_SERVER_URL}
-        - REGISTRATION_TOKEN=${GITLAB_RUNNER_REGISTRATION_TOKEN}
-        - RUNNER_NAME=${COMPOSE_PROJECT_NAME}-runner
+        - REGISTRATION_TOKEN:${GITLAB_RUNNER_REGISTRATION_TOKEN}
+        - RUNNER_NAME:${COMPOSE_PROJECT_NAME}-runner
         - REGISTER_NON_INTERACTIVE=${GITLAB_REGISTER_NON_INTERACTIVE}
         - RUNNER_EXECUTOR=shell
       volumes:

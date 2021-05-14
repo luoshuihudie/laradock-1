@@ -727,7 +727,7 @@ RUN if [ ${INSTALL_SWOOLE} = true ]; then \
     else \
         curl -L -o /tmp/swoole-4.3.5.tgz "https://pecl.php.net/get/swoole-4.6.6.tgz"; \
     fi \
-    && printf "yes\nyes\nyes\nyes\n" | pecl -vvv -q install /tmp/swoole-4.3.5.tgz \
+    && printf "yes\nno\nno\nno\n" | pecl -vvv -q install /tmp/swoole-4.3.5.tgz \
     && rm /tmp/swoole-4.3.5.tgz \
     && echo "extension=swoole.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/swoole.ini \
     && echo "swoole.use_shortname = off" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/swoole.ini \
@@ -1448,6 +1448,26 @@ RUN if [ ${INSTALL_PYTHON3} = true ]; then \
 ;fi
 
 ###########################################################################
+# GO:
+###########################################################################
+
+ARG INSTALL_GO=false
+
+RUN if [ ${INSTALL_GO} = true ]; then \
+  curl -L -o /tmp/go1.16.4.linux-amd64.tar.gz "https://dl.google.com/go/go1.16.4.linux-amd64.tar.gz" \
+  && cd /tmp \
+  && tar -zxvf ./go1.16.4.linux-amd64.tar.gz \
+  && cp -rf go /usr/local \
+  && cd /usr/local \
+  && chmod -R 0777 go \
+  && export GOROOT=/usr/local/go \
+  && export GOPATH=/var/go/GOPATH \
+  && export PATH=$GOPATH/bin:$GOROOT/bin:$PATH \
+  && export PATH=$PATH:/usr/local/go/bin \
+  && go version \
+;fi
+
+###########################################################################
 # POWERLINE:
 ###########################################################################
 
@@ -1658,7 +1678,7 @@ USER root
 ARG INSTALL_YAML=false
 ARG LARADOCK_PHP_VERSION
 
-RUN if [ ${INSTALL_YAML} = true ]; then \
+RUN if [ ${INSTALL_YAML} = false ]; then \
     apt-get install libyaml-dev -y ; \
 #    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
 #        pecl install -a yaml-2.2.1; \
@@ -1683,7 +1703,7 @@ RUN if [ ${INSTALL_YAML} = true ]; then \
 ARG INSTALL_RDKAFKA=false
 ARG LARADOCK_PHP_VERSION
 
-RUN if [ ${INSTALL_RDKAFKA} = true ]; then \
+RUN if [ ${INSTALL_RDKAFKA} = false ]; then \
     apt-get install -y librdkafka-dev && \
     pecl install rdkafka && \
     echo "extension=rdkafka.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/rdkafka.ini && \
@@ -2009,4 +2029,3 @@ RUN apt-get clean && \
     rm /var/log/lastlog /var/log/faillog
 
 # Set default work directory
-WORKDIR /var/www

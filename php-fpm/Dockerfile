@@ -403,7 +403,8 @@ RUN if [ ${INSTALL_SWOOLE} = true ]; then \
         curl -L -o /tmp/swoole-4.3.5.tgz "https://pecl.php.net/get/swoole-4.6.6.tgz"; \
     fi \
 #    && pecl -vvv -q install /tmp/swoole-4.3.5.tgz \
-    && printf "yes\nyes\nyes\nyes\n" | pecl -vvv -q install /tmp/swoole-4.3.5.tgz \
+    && pecl -vvv -q install /tmp/swoole-4.3.5.tgz \
+#    && printf "yes\nyes\nyes\nyes\nyes\nyes\n" | pecl -vvv -q install /tmp/swoole-4.3.5.tgz \
 #    /usr/include/openssl
     && rm /tmp/swoole-4.3.5.tgz \
     && docker-php-ext-enable swoole \
@@ -584,14 +585,16 @@ RUN if [ ${INSTALL_XHPROF} = false ]; then \
 # AMQP:
 ###########################################################################
 
-#ARG INSTALL_AMQP=true
-#
-#RUN if [ ${INSTALL_AMQP} = true ]; then \
-#    apt-get install librabbitmq-dev -y && \
-#    # Install the amqp extension
-#    pecl install amqp && \
-#    docker-php-ext-enable amqp \
-#;fi
+ARG INSTALL_AMQP=true
+
+RUN if [ ${INSTALL_AMQP} = true ]; then \
+    apt-get install librabbitmq-dev -y && \
+    # Install the amqp extension
+    pecl install amqp-1.11.0beta && \
+    docker-php-ext-enable amqp && \
+    docker-php-ext-install sockets && \
+    php -m | grep -q 'sockets' \
+;fi
 #
 ############################################################################
 ## ZipArchive:
@@ -604,34 +607,36 @@ RUN if [ ${INSTALL_XHPROF} = false ]; then \
 #    docker-php-ext-configure zip --with-libzip && \
 #    # Install the zip extension
 #    docker-php-ext-install zip \
-ARG INSTALL_AMQP=false
-
-RUN if [ ${INSTALL_AMQP} = true ]; then \
-    # download and install manually, to make sure it's compatible with ampq installed by pecl later
-    # install cmake first
-    apt-get -yqq install cmake && \
-    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ] || [ $(php -r "echo PHP_VERSION_ID - PHP_RELEASE_VERSION;") = "70000" ]; then \
-      curl -L -o /tmp/rabbitmq-c.tar.gz https://github.com/alanxz/rabbitmq-c/archive/v0.11.0.tar.gz; \
-    else \
-      curl -L -o /tmp/rabbitmq-c.tar.gz https://github.com/alanxz/rabbitmq-c/archive/master.tar.gz; \
-    fi && \
-    mkdir -p rabbitmq-c && \
-    tar -C rabbitmq-c -zxvf /tmp/rabbitmq-c.tar.gz --strip 1 && \
-    cd rabbitmq-c/ && \
-    mkdir _build && cd _build/ && \
-    cmake .. && \
-    cmake --build . --target install && \
-    # Install the amqp extension
-    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
-      printf "\n" | pecl install amqp-1.11.0beta; \
-    else \
-      printf "\n" | pecl install amqp; \
-    fi && \
-    docker-php-ext-enable amqp && \
-    # Install the sockets extension
-    docker-php-ext-install sockets && \
-    php -m | grep -q 'sockets' \
-;fi
+#ARG INSTALL_AMQP=false
+#
+#RUN if [ ${INSTALL_AMQP} = true ]; then \
+#    # download and install manually, to make sure it's compatible with ampq installed by pecl later
+#    # install cmake first
+#    apt-get update && \
+#    apt-get install librabbitmq-dev -y && \
+#    apt-get -yqq install cmake && \
+#    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ] || [ $(php -r "echo PHP_VERSION_ID - PHP_RELEASE_VERSION;") = "70000" ]; then \
+#      curl -L -o /tmp/rabbitmq-c.tar.gz https://github.com/alanxz/rabbitmq-c/archive/v0.11.0.tar.gz; \
+#    else \
+#      curl -L -o /tmp/rabbitmq-c.tar.gz https://github.com/alanxz/rabbitmq-c/archive/master.tar.gz; \
+#    fi && \
+#    mkdir -p rabbitmq-c && \
+#    tar -C rabbitmq-c -zxvf /tmp/rabbitmq-c.tar.gz --strip 1 && \
+#    cd rabbitmq-c/ && \
+#    mkdir _build && cd _build/ && \
+#    cmake .. && \
+#    cmake --build . --target install && \
+#    # Install the amqp extension
+#    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
+#      printf "\n" | pecl install amqp-1.11.0beta; \
+#    else \
+#      printf "\n" | pecl install amqp; \
+#    fi && \
+#    docker-php-ext-enable amqp && \
+#    # Install the sockets extension
+#    docker-php-ext-install sockets && \
+#    php -m | grep -q 'sockets' \
+#;fi
 
 ###########################################################################
 # CASSANDRA:
@@ -1008,6 +1013,7 @@ RUN if [ ${INSTALL_IMAGEMAGICK} = true ]; then \
     && rm /tmp/imagick-3.4.3.tgz \
 #    pecl install imagick && \
     && docker-php-ext-enable imagick \
+    && php -i \
 #    apt-get install -yqq libmagickwand-dev imagemagick && \
 #    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
 #      cd /tmp && \

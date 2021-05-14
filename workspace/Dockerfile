@@ -1440,11 +1440,13 @@ RUN if [ ${INSTALL_GO} = true ]; then \
   && tar -zxvf ./go1.16.4.linux-amd64.tar.gz \
   && cp -rf go /usr/local \
   && cd /usr/local \
-  && chmod -R 0777 go \
+  && chmod -R 0755 go \
+  && ln -s /usr/local/go/bin/go /usr/bin/go
   && export GOROOT=/usr/local/go \
   && export GOPATH=/var/go/GOPATH \
   && export PATH=$GOPATH/bin:$GOROOT/bin:$PATH \
   && export PATH=$PATH:/usr/local/go/bin \
+  && echo "输出Go Version+++++++++++++++" \
   && go version \
 ;fi
 

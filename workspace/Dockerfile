@@ -1441,7 +1441,7 @@ RUN if [ ${INSTALL_GO} = true ]; then \
   && cp -rf go /usr/local \
   && cd /usr/local \
   && chmod -R 0755 go \
-  && ln -s /usr/local/go/bin/go /usr/bin/go
+  && ln -s /usr/local/go/bin/go /usr/bin/go \
   && export GOROOT=/usr/local/go \
   && export GOPATH=/var/go/GOPATH \
   && export PATH=$GOPATH/bin:$GOROOT/bin:$PATH \

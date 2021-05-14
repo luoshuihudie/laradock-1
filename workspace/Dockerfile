@@ -342,34 +342,20 @@ RUN set -eux; \
 
 ###########################################################################
 
-ARG INSTALL_LDAP=false
-ARG LARADOCK_PHP_VERSION
-
-RUN if [ ${INSTALL_LDAP} = true ]; then \
-    apt-get update && \
-    apt-get install -y libldap2-dev && \
-    apt-get install -y php${LARADOCK_PHP_VERSION}-ldap \
-;fi
-
 ###########################################################################
 # SMB:
 ###########################################################################
-
 ARG INSTALL_SMB=false
+ARG INSTALL_LDAP=false
 ARG INSTALL_IMAP=false
+ARG INSTALL_SUBVERSION=false
 ARG LARADOCK_PHP_VERSION
-
-RUN if [ ${INSTALL_IMAP} = true ]; then \
-    apt-get install -y php${LARADOCK_PHP_VERSION}-imap \
-;fi
 
 ###########################################################################
 # Subversion:
 ###########################################################################
 
-USER root
 
-ARG INSTALL_SUBVERSION=false
 
 RUN set -eux; \
     ###########################################################################
@@ -828,7 +814,7 @@ ARG INSTALL_LIBPNG=false
 
 RUN if [ ${INSTALL_LIBPNG} = true ]; then \
     apt-get update && \
-    apt-get install libpng16-16 \
+    apt-get -yqq install libpng16-16 \
 ;fi
 
 ###########################################################################
@@ -1430,6 +1416,8 @@ RUN if [ ${INSTALL_PYTHON} = true ]; then \
 # PYTHON3:
 ###########################################################################
 
+USER root
+
 ARG INSTALL_PYTHON3=false
 
 RUN if [ ${INSTALL_PYTHON3} = true ]; then \
@@ -1441,6 +1429,8 @@ RUN if [ ${INSTALL_PYTHON3} = true ]; then \
 ###########################################################################
 # GO:
 ###########################################################################
+
+USER root
 
 ARG INSTALL_GO=false
 
@@ -1667,49 +1657,9 @@ RUN set -eux; \
 USER root
 
 ARG INSTALL_YAML=false
-ARG LARADOCK_PHP_VERSION
-
-RUN if [ ${INSTALL_YAML} = false ]; then \
-    apt-get install libyaml-dev -y ; \
-#    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-#        pecl install -a yaml-2.2.1; \
-#    else \
-#        pecl install yaml; \
-#    fi && \
-    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-        curl -L -o /tmp/yaml-2.2.1.tgz "http://pecl.php.net/get/yaml-2.2.1.tgz"; \
-    else \
-        curl -L -o /tmp/yaml-2.2.1.tgz "http://pecl.php.net/get/yaml-2.2.1.tgz"; \
-    fi \
-    && pecl -vvv -q install /tmp/yaml-2.2.1.tgz \
-    && rm /tmp/yaml-2.2.1.tgz  && \
-    echo "extension=yaml.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/yaml.ini && \
-    ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/yaml.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/35-yaml.ini \
-;fi
-
-###########################################################################
-# RDKAFKA:
-###########################################################################
-
-ARG INSTALL_RDKAFKA=false
-ARG LARADOCK_PHP_VERSION
-
-RUN if [ ${INSTALL_RDKAFKA} = false ]; then \
-    apt-get install -y librdkafka-dev && \
-    pecl install rdkafka && \
-    echo "extension=rdkafka.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/rdkafka.ini && \
-    ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/rdkafka.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-rdkafka.ini \
-    && php -m | grep -q 'rdkafka' \
-;fi
-
-###########################################################################
-# FFMpeg:
-###########################################################################
-
-USER root
-
 ARG INSTALL_RDKAFKA=false
 ARG INSTALL_FFMPEG=false
+ARG LARADOCK_PHP_VERSION
 
 RUN set -eux; \
   ###########################################################################
@@ -1717,13 +1667,20 @@ RUN set -eux; \
   ###########################################################################
   if [ ${INSTALL_YAML} = true ]; then \
     apt-get install -yqq libyaml-dev; \
-    if   [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-        echo '' | pecl install -a yaml-1.3.2; \
-    elif [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ] && [ $(php -r "echo PHP_MINOR_VERSION;") = "0" ]; then \
-        echo '' | pecl install yaml-2.0.4; \
+#    if   [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
+#        echo '' | pecl install -a yaml-1.3.2; \
+#    elif [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ] && [ $(php -r "echo PHP_MINOR_VERSION;") = "0" ]; then \
+#        echo '' | pecl install yaml-2.0.4; \
+#    else \
+#        echo '' | pecl install yaml; \
+#    fi; \
+    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
+        curl -L -o /tmp/yaml-2.2.1.tgz "http://pecl.php.net/get/yaml-2.2.1.tgz"; \
     else \
-        echo '' | pecl install yaml; \
-    fi; \
+        curl -L -o /tmp/yaml-2.2.1.tgz "http://pecl.php.net/get/yaml-2.2.1.tgz"; \
+    fi \
+    && pecl -vvv -q install /tmp/yaml-2.2.1.tgz \
+    && rm /tmp/yaml-2.2.1.tgz  && \
     echo "extension=yaml.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/yaml.ini; \
     ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/yaml.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/35-yaml.ini; \
   fi; \
@@ -2020,3 +1977,4 @@ RUN apt-get clean && \
     rm /var/log/lastlog /var/log/faillog
 
 # Set default work directory
+WORKDIR /var/www

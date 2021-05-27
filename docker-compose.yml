@@ -1016,6 +1016,21 @@ services:
         - frontend
         - backend
 
+### Zipkin ##############################################
+    zipkin:
+      build:
+        context: ./zipkin
+        args:
+          - ZIPKIN_VERSION=${ZIPKIN_VERSION}
+      ports:
+        - "${ZIPKIN_HTTP_PORT}:9411"
+      depends_on:
+        - elasticsearch
+        - php-fpm
+      networks:
+        - frontend
+        - backend
+
 ### Filebeat ##############################################
     filebeat:
       build:

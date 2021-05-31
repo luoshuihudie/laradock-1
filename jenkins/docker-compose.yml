@@ -5,7 +5,7 @@ master:
   ports:
     - "50000:50000"
     # Expose Jenkins to parent on port 8090
-    - "8090:8080"
+    - "8080:8090"
   # Allow Docker In Docker
   privileged: true
   volumes:

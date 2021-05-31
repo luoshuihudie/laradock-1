@@ -29,7 +29,7 @@ ENV TINI_VERSION 0.16.1
 ENV TINI_SHA d1cb5d71adc01d47e302ea439d70c79bd0864288
 
 # Use tini as subreaper in Docker container to adopt zombie processes 
-RUN curl -fsSL https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini-static-amd64 -o /bin/tini && chmod +x /bin/tini \
+RUN curl -fsSL https://hub.fastgit.org/krallin/tini/releases/download/v${TINI_VERSION}/tini-static-amd64 -o /bin/tini && chmod +x /bin/tini \
   && echo "$TINI_SHA  /bin/tini" | sha1sum -c -
 
 COPY init.groovy /usr/share/jenkins/ref/init.groovy.d/tcp-slave-agent-port.groovy
@@ -37,6 +37,7 @@ COPY init.groovy /usr/share/jenkins/ref/init.groovy.d/tcp-slave-agent-port.groov
 # jenkins version being bundled in this docker image
 ARG JENKINS_VERSION
 ENV JENKINS_VERSION ${JENKINS_VERSION:-2.89.2}
+ENV JENKINS_OPTS --httpPort=8090
 
 # jenkins.war checksum, download will be validated using it
 # 2.89.2
@@ -73,7 +74,7 @@ RUN apt-get install -y curl && curl -sSL https://get.docker.com/ | sh
 RUN usermod -aG docker jenkins
 
 # Install Docker-Compose
-RUN curl -L "https://github.com/docker/compose/releases/download/1.16.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+RUN curl -L "https://hub.fastgit.org/docker/compose/releases/download/1.16.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 RUN chmod +x /usr/local/bin/docker-compose
 
 
@@ -111,4 +112,5 @@ COPY install-plugins.sh /usr/local/bin/install-plugins.sh
 
 # Fix docker permission denied error
 USER root
+RUN chmod 777 /usr/local/bin/jenkins.sh
 RUN usermod -aG docker jenkins

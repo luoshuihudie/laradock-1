@@ -1196,13 +1196,14 @@ services:
     jenkins:
       build: ./jenkins
       environment:
-        JAVA_OPTS: "-Djava.awt.headless=true"
+        JAVA_OPTS: "-Djava.awt.headless=true -Dhudson.model.DownloadService.noSignatureCheck=true"
       ports:
         - "${JENKINS_HOST_SLAVE_AGENT_PORT}:50000"
         - "${JENKINS_HOST_HTTP_PORT}:8090"
       privileged: true
       volumes:
         - ${JENKINS_HOME}:/var/jenkins_home
+        - ${JENKINS_HOME_WORKSPACE}:/var/www
         - /var/run/docker.sock:/var/run/docker.sock
       networks:
         - frontend

@@ -1445,6 +1445,22 @@ RUN if [ ${DOWNGRADE_OPENSSL_TLS_AND_SECLEVEL} = true ]; then \
     sed -i 's,^\(CipherString[ ]*=\).*,\1'DEFAULT@SECLEVEL=1',g' /etc/ssl/openssl.cnf\
 ;fi
 
+ARG PHP_FPM_INSTALL_XLSWRITER=true
+ARG LARADOCK_PHP_VERSION
+
+RUN if [ ${PHP_FPM_INSTALL_XLSWRITER} = true ]; then \
+    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
+        curl -L -o /tmp/xlswriter-1.3.7.tgz "https://pecl.php.net/get/xlswriter-1.3.7.tgz"; \
+    else \
+        curl -L -o /tmp/xlswriter-1.3.7.tgz "https://pecl.php.net/get/xlswriter-1.3.7.tgz"; \
+    fi \
+    && apt install zlib1g-dev -y \
+    && pecl -vvv -q install /tmp/xlswriter-1.3.7.tgz \
+    && rm /tmp/xlswriter-1.3.7.tgz \
+    && echo "extension=xlswriter.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/xlswriter.ini \
+    && ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/xlswriter.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-xlswriter.ini \
+;fi
+
 ###########################################################################
 # Check PHP version:
 ###########################################################################

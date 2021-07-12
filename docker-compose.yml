@@ -1209,6 +1209,26 @@ services:
         - frontend
         - backend
 
+### AnotherRedisDesktopManager ################################################
+    another-redis-desktop-manager:
+      build:
+        context: ./another-redis-desktop-manager
+        args:
+          - ANOTHER_REDIS_DESKTOP_MANAGER_WORKSPACE=${ANOTHER_REDIS_DESKTOP_MANAGER_WORKSPACE}
+      environment:
+        - ANOTHER_REDIS_DESKTOP_MANAGER_WORKSPACE_ENV=${ANOTHER_REDIS_DESKTOP_MANAGER_WORKSPACE}
+      volumes:
+        - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
+      networks:
+        - backend
+        - frontend
+      ports:
+        - "${ANOTHER_REDIS_DESKTOP_MANAGER_PORT}:9988"
+      depends_on:
+        - redis
+      links:
+        - redis
+
 ### Grafana ################################################
     grafana:
       build:

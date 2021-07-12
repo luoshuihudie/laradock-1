@@ -535,14 +535,15 @@ ARG INSTALL_XHPROF=false
 
 RUN if [ ${INSTALL_XHPROF} = true ]; then \
     # Install the php xhprof extension
-    if [ $(php -r "echo PHP_MAJOR_VERSION;") = 7 ]; then \
+#    if [ $(php -r "echo PHP_MAJOR_VERSION;") = 7 ]; then \
 # curl -L -o /tmp/xhprof.tar.gz "https://github.com/tideways/php-xhprof-extension/archive/v5.0.1.tar.gz"; \
- curl -L -o /tmp/xhprof.tar.gz "https://hub.fastgit.org/tideways/php-xhprof-extension/archive/v5.0.2.tar.gz"; \
-	else \ 
-      curl -L -o /tmp/xhprof.tar.gz "https://codeload.github.com/phacility/xhprof/tar.gz/master"; \
-    fi \
-    && mkdir -p xhprof \
-    && tar -C xhprof -zxvf /tmp/xhprof.tar.gz --strip 1 \
+# curl -L -o /tmp/xhprof.tar.gz "https://github.com/tideways/php-xhprof-extension/releases/download/v5.0.4/tideways-xhprof-5.0.4-x86_64.tar.gz"; \
+	cd /tmp && git clone https://hub.fastgit.org/tideways/php-xhprof-extension.git && mv ./php-xhprof-extension ./xhprof \
+#	else \
+#      curl -L -o /tmp/xhprof.tar.gz "http://codeload.github.com/phacility/xhprof/tar.gz/master"; \
+#    fi \
+#    && mkdir -p xhprof \
+#    && tar -C xhprof -zxvf /tmp/xhprof.tar.gz --strip 1 \
     && ( \
         cd xhprof \
         && phpize \
@@ -551,7 +552,7 @@ RUN if [ ${INSTALL_XHPROF} = true ]; then \
         && make install \
     ) \
     && rm -r xhprof \
-    && rm /tmp/xhprof.tar.gz \
+#    && rm /tmp/xhprof.tar.gz \
 ;fi
 
 COPY ./xhprof.ini /usr/local/etc/php/conf.d
@@ -657,11 +658,11 @@ RUN set -eux; \
       else \
         pecl install amqp; \
       fi; \
-      docker-php-ext-enable amqp; && \
+      docker-php-ext-enable amqp && \
       docker-php-ext-install sockets && \
       php -m | grep -q 'sockets' && \
-      php -m | grep -oiE '^amqp$'; \
-    fi
+      php -m | grep -oiE '^amqp$' \
+    ;fi
 
 ###########################################################################
 # CASSANDRA:
@@ -1457,8 +1458,9 @@ RUN if [ ${PHP_FPM_INSTALL_XLSWRITER} = true ]; then \
     && apt install zlib1g-dev -y \
     && pecl -vvv -q install /tmp/xlswriter-1.3.7.tgz \
     && rm /tmp/xlswriter-1.3.7.tgz \
-    && echo "extension=xlswriter.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/xlswriter.ini \
-    && ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/xlswriter.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-xlswriter.ini \
+    && docker-php-ext-enable xlswriter \
+#    && echo "extension=xlswriter.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/xlswriter.ini \
+#    && ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/xlswriter.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/30-xlswriter.ini \
 ;fi
 
 ###########################################################################

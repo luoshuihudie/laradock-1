@@ -681,37 +681,6 @@ RUN if [ ${INSTALL_PHPREDIS} = true ]; then \
 ;fi
 
 ###########################################################################
-# Swoole EXTENSION
-###########################################################################
-
-USER root
-
-ARG INSTALL_SWOOLE=true
-
-RUN if [ ${INSTALL_SWOOLE} = true ]; then \
-    # Install Php Swoole Extension
-#    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-#      pecl -q install swoole-2.0.11; \
-#    else \
-#      if [ $(php -r "echo PHP_MINOR_VERSION;") = "0" ]; then \
-#        pecl install swoole-2.2.0; \
-#      else \
-#        pecl install swoole; \
-#      fi \
-#    fi && \
-    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-        curl -L -o /tmp/swoole-4.3.5.tgz "https://pecl.php.net/get/swoole-4.6.6.tgz"; \
-    else \
-        curl -L -o /tmp/swoole-4.3.5.tgz "https://pecl.php.net/get/swoole-4.6.6.tgz"; \
-    fi \
-    && printf "yes\nno\nno\nno\n" | pecl -vvv -q install /tmp/swoole-4.3.5.tgz \
-    && rm /tmp/swoole-4.3.5.tgz \
-    && echo "extension=swoole.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/swoole.ini \
-    && echo "swoole.use_shortname = off" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/swoole.ini \
-    && ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/swoole.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-swoole.ini \
-;fi
-
-###########################################################################
 # PHP GRPC EXTENSION
 ###########################################################################
 
@@ -1805,6 +1774,37 @@ ARG INSTALL_LNAV=false
 
 RUN if [ ${INSTALL_LNAV} = true ]; then \
     apt-get install -yqq lnav \
+;fi
+
+###########################################################################
+# Swoole EXTENSION
+###########################################################################
+
+USER root
+
+ARG INSTALL_SWOOLE=true
+
+RUN if [ ${INSTALL_SWOOLE} = true ]; then \
+    # Install Php Swoole Extension
+#    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
+#      pecl -q install swoole-2.0.11; \
+#    else \
+#      if [ $(php -r "echo PHP_MINOR_VERSION;") = "0" ]; then \
+#        pecl install swoole-2.2.0; \
+#      else \
+#        pecl install swoole; \
+#      fi \
+#    fi && \
+    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
+        curl -L -o /tmp/swoole-4.3.5.tgz "https://pecl.php.net/get/swoole-4.6.6.tgz"; \
+    else \
+        curl -L -o /tmp/swoole-4.3.5.tgz "https://pecl.php.net/get/swoole-4.6.6.tgz"; \
+    fi \
+    && printf "yes\nyes\nyes\nyes\n" | pecl -vvv -q install /tmp/swoole-4.3.5.tgz \
+    && rm /tmp/swoole-4.3.5.tgz \
+    && echo "extension=swoole.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/swoole.ini \
+    && echo "swoole.use_shortname = off" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/swoole.ini \
+    && ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/swoole.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-swoole.ini \
 ;fi
 
 ###########################################################################

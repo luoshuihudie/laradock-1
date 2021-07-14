@@ -1990,6 +1990,7 @@ services:
         - ${DATA_PATH_HOST}/sonarqube/plugins:/opt/sonarqube/lib/bundled-plugins
       ports:
         - ${SONARQUBE_PORT}:9500
+        - ${SONARQUBE_WEB_PORT}:9901
       depends_on:
         - postgres
         - elasticsearch

@@ -459,9 +459,9 @@ RUN if [ ${INSTALL_YAF} = true ]; then \
 #      fi \
 #    fi && \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-        curl -L -o /tmp/yaf-3.0.7.tgz "https://pecl.php.net/get/yaf-3.3.0.tgz"; \
+        curl -L -o /tmp/yaf-3.0.7.tgz "https://pecl.php.net/get/yaf-3.3.3.tgz"; \
     else \
-        curl -L -o /tmp/yaf-3.0.7.tgz "https://pecl.php.net/get/yaf-3.3.0.tgz"; \
+        curl -L -o /tmp/yaf-3.0.7.tgz "https://pecl.php.net/get/yaf-3.3.3.tgz"; \
     fi \
     && pecl -vvv -q install /tmp/yaf-3.0.7.tgz \
     && rm /tmp/yaf-3.0.7.tgz \
@@ -1029,7 +1029,8 @@ ARG IMAGEMAGICK_VERSION=latest
 ENV IMAGEMAGICK_VERSION ${IMAGEMAGICK_VERSION}
 
 RUN if [ ${INSTALL_IMAGEMAGICK} = true ]; then \
-    apt-get install -y libmagickwand-dev imagemagick && \
+    apt-get update && \
+    apt-get install -y libmagickwand-dev imagemagick --fix-missing && \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
         curl -L -o /tmp/imagick-3.4.3.tgz "https://pecl.php.net/get/imagick-3.4.3.tgz"; \
     else \
@@ -1111,7 +1112,7 @@ COPY ./phalcon.ini /usr/local/etc/php/conf.d/phalcon.ini.disable
 RUN if [ $INSTALL_PHALCON = true ]; then \
     apt-get update && apt-get install -y unzip libpcre3-dev gcc make re2c git automake autoconf\
 #&& git clone https://github.com/jbboehr/php-psr.git \
-&& git clone https://hub.fastgit.org/jbboehr/php-psr.git \ 
+&& git clone https://hub.fastgit.org/jbboehr/php-psr.git \
 && cd php-psr \
     && phpize --enable-phalcon \
     && ./configure \

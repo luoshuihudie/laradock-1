@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk
+FROM openjdk:11-jdk
 
 RUN apt-get update && apt-get install -y git curl && rm -rf /var/lib/apt/lists/*
 
@@ -11,24 +11,24 @@ ARG uid=1000
 ARG gid=1000
 
 # Jenkins is run with user `jenkins`, uid = 1000
-# If you bind mount a volume from the host or a data container, 
+# If you bind mount a volume from the host or a data container,
 # ensure you use the same uid
 RUN groupadd -g ${gid} ${group} \
     && useradd -d "$JENKINS_HOME" -u ${uid} -g ${gid} -m -s /bin/bash ${user}
 
-# Jenkins home directory is a volume, so configuration and build history 
+# Jenkins home directory is a volume, so configuration and build history
 # can be persisted and survive image upgrades
 VOLUME /var/jenkins_home
 
-# `/usr/share/jenkins/ref/` contains all reference configuration we want 
-# to set on a fresh new installation. Use it to bundle additional plugins 
+# `/usr/share/jenkins/ref/` contains all reference configuration we want
+# to set on a fresh new installation. Use it to bundle additional plugins
 # or config file with your custom jenkins Docker image.
 RUN mkdir -p /usr/share/jenkins/ref/init.groovy.d
 
 ENV TINI_VERSION 0.16.1
 ENV TINI_SHA d1cb5d71adc01d47e302ea439d70c79bd0864288
 
-# Use tini as subreaper in Docker container to adopt zombie processes 
+# Use tini as subreaper in Docker container to adopt zombie processes
 RUN curl -fsSL https://hub.fastgit.org/krallin/tini/releases/download/v${TINI_VERSION}/tini-static-amd64 -o /bin/tini && chmod +x /bin/tini \
   && echo "$TINI_SHA  /bin/tini" | sha1sum -c -
 
@@ -37,7 +37,7 @@ COPY init.groovy /usr/share/jenkins/ref/init.groovy.d/tcp-slave-agent-port.groov
 # jenkins version being bundled in this docker image
 ARG JENKINS_VERSION
 ENV JENKINS_VERSION ${JENKINS_VERSION:-2.295}
-ENV JENKINS_OPTS --httpPort=8090
+ENV JENKINS_OPTS --httpPort=8090 -Duser.timezone=Asia/Shanghai
 
 # jenkins.war checksum, download will be validated using it
 # 2.295
@@ -47,7 +47,7 @@ ARG JENKINS_SHA=0c5e985cdb434fe8932c07f9f30e5e369bf6892a51c6b8431ffa4fa8509dd604
 # Can be used to customize where jenkins.war get downloaded from
 ARG JENKINS_URL=https://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-war/${JENKINS_VERSION}/jenkins-war-${JENKINS_VERSION}.war
 
-# could use ADD but this one does not check Last-Modified header neither does it allow to control checksum 
+# could use ADD but this one does not check Last-Modified header neither does it allow to control checksum
 # see https://github.com/docker/docker/issues/8331
 RUN curl -fsSL ${JENKINS_URL} -o /usr/share/jenkins/jenkins.war \
   && echo "${JENKINS_SHA}  /usr/share/jenkins/jenkins.war" | sha256sum -c -
@@ -67,6 +67,7 @@ RUN groupadd -g ${DOCKER_GID} docker \
   && apt-get -q clean -y \
   && rm -rf /var/lib/apt/lists/* /var/cache/apt/*.bin
 
+
 # Install Docker-in-Docker from git@github.com:jpetazzo/dind.git
 # RUN apt-get update -qq && apt-get install -qqy apt-transport-https ca-certificates curl lxc iptables
 # Install Docker from Docker Inc. repositories.
@@ -77,6 +78,30 @@ RUN usermod -aG docker jenkins
 RUN curl -L "https://hub.fastgit.org/docker/compose/releases/download/1.16.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 RUN chmod +x /usr/local/bin/docker-compose
 
+#安装PHP环境
+# update
+RUN set -ex \
+    && apt update \
+    && apt install -yqq \
+    php7.3 \
+    php7.3-curl \
+    php7.3-dom \
+    php7.3-gd \
+    php7.3-mysql \
+    php7.3-mysqlnd \
+    php7.3-pdo \
+    php7.3-xdebug \
+    php7.3-tokenizer \
+    && ln -sf /usr/bin/php7.3 /usr/bin/php \
+    # install composer
+    && curl -SL https://github.com/composer/composer/releases/download/2.0.12/composer.phar -o /usr/local/bin/composer \
+    && chmod u+x /usr/local/bin/composer \
+    # ---------- clear works ----------
+    && rm -rf /var/cache/apk/* /tmp/* /usr/share/man /usr/share/php7.3 /usr/local/bin/php* \
+    # php info
+    && php -m \
+    && php -v \
+    && composer -V \
 
 # for main web interface:
 EXPOSE 8090

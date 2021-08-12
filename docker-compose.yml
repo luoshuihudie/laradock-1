@@ -3,8 +3,16 @@ version: '3.5'
 networks:
   frontend:
     driver: ${NETWORKS_DRIVER}
+    ipam:
+      config:
+        - subnet: 192.167.0.0/24
+          gateway: 192.167.0.1
   backend:
     driver: ${NETWORKS_DRIVER}
+    ipam:
+      config:
+        - subnet: 192.166.0.0/24
+          gateway: 192.166.0.1
 
 volumes:
   mysql:
@@ -417,6 +425,7 @@ services:
         - "${VARNISH_BACKEND_PORT}:81"
       depends_on:
         - php-fpm
+        - jenkins
       networks:
         - frontend
         - backend
@@ -1194,13 +1203,20 @@ services:
 
 ### Jenkins ###################################################
     jenkins:
-      build: ./jenkins
+      build:
+        context: ./jenkins
+        args:
+        - JENKINS_VERSION=${JENKINS_VERSION}
       environment:
         JAVA_OPTS: "-Djava.awt.headless=true -Dhudson.model.DownloadService.noSignatureCheck=true"
       ports:
         - "${JENKINS_HOST_SLAVE_AGENT_PORT}:50000"
         - "${JENKINS_HOST_HTTP_PORT}:8090"
       privileged: true
+      depends_on:
+        - influxdb
+        - elasticsearch
+        - sonarqube
       volumes:
         - ${JENKINS_HOME}:/var/jenkins_home
         - ${JENKINS_HOME_WORKSPACE}:/var/www
@@ -1988,6 +2004,7 @@ services:
         - ${DATA_PATH_HOST}/sonarqube/logs:/opt/sonarqube/logs
         - ${DATA_PATH_HOST}/sonarqube/extensions:/opt/sonarqube/extensions
         - ${DATA_PATH_HOST}/sonarqube/plugins:/opt/sonarqube/lib/bundled-plugins
+        - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG}
       ports:
         - ${SONARQUBE_PORT}:9500
         - ${SONARQUBE_WEB_PORT}:9901
@@ -2070,13 +2087,15 @@ services:
     kafka:
       image: wurstmeister/kafka
       ports:
-        - "9092:9092"
+        - "${KAFKA_PORT}:9092"
       environment:
         KAFKA_BROKER_ID: 1
         KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
         KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://127.0.0.1:9092
         KAFKA_MESSAGE_MAX_BYTES: 2000000
         KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      depends_on:
+        - zookeeper
       volumes:
         - ${DATA_PATH_HOST}/kafka:/kafka
         - /var/run/docker.sock:/var/run/docker.sock
@@ -2087,8 +2106,68 @@ services:
     kafka-manager:
       image: sheepkiller/kafka-manager
       ports:
-        - 9020:9000
+        - ${KAFKA_MANAGER_PORT}:9020
+        - ${KAFKA_MANAGER_WEB_PORT}:9021
       environment:
         ZK_HOSTS: zookeeper:2181
+      depends_on:
+        - zookeeper
       networks:
+        - backend
+
+### Nacos ##############################################
+    nacos:
+      build:
+        context: ./nacos
+        args:
+          - NACOS_VERSION=${NACOS_VERSION}
+      volumes:
+        - ${DATA_PATH_HOST}/nacos/standalone-logs:/usr/share/nacos/logs
+        - ${DATA_PATH_HOST_LOCAL}/nacos/init.d/custom.properties:/usr/share/nacos/init.d/custom.properties
+      ports:
+        - ${NACOS_PORT}:8548
+        - ${NACOS_PORT_CLUSTER_NO1}:9548
+        - ${NACOS_PORT_CLUSTER_NO2}:9648
+      environment:
+        PREFER_HOST_MODE: ${NACOS_HOST_MODE}
+        MODE: ${NACOS_MODE}
+      networks:
+        - frontend
+        - backend
+      depends_on:
+        - elasticsearch
+        - influxdb
+
+### Prometheus ##############################################
+    prometheus:
+      build:
+        context: ./prometheus
+        args:
+          - PROMETHEUS_VERSION=${PROMETHEUS_VERSION}
+      volumes:
+        - ${DATA_PATH_HOST_LOCAL}/prometheus/init.d/prometheus-standalone.yaml:/etc/prometheus/prometheus.yml
+      ports:
+        - ${PROMETHEUS_PORT}:9990
+      networks:
+        - frontend
+        - backend
+      depends_on:
+        - nacos
+
+### Consul ##############################################
+    consul:
+      build:
+        context: ./consul
+        args:
+          - CONSUL_VERSION=${CONSUL_VERSION}
+      volumes:
+        - ${DATA_PATH_HOST_LOCAL}/consul:/consul/data
+      ports:
+        - ${CONSUL_PORT}:8300
+        - ${CONSUL_PORT_NO1}:8301
+        - ${CONSUL_PORT_NO2}:8302
+        - ${CONSUL_PORT_NO3}:8500
+        - ${CONSUL_PORT_NO4}:8600
+      networks:
+        - frontend
         - backend

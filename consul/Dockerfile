@@ -1,0 +1,7 @@
+ARG CONSUL_VERSION
+FROM consul:${CONSUL_VERSION}
+
+USER root
+ADD ./init.d/ /consul/data
+
+EXPOSE 8300 8301 8302 8500 8600
